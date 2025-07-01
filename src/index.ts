@@ -15,9 +15,23 @@ client.once(Events.ClientReady, readyClient => {
 
 client.login(process.env.BOT_TOKEN);
 
+let lastmessage = '';
+
 client.on('messageCreate', async (message) => {
   // We only care about self-mentions
   if (!message.mentions.members.has(client.user.id)) {
+    return;
+  }
+
+  if (message.content.endsWith(' continue') &&
+      message.content.split(' ').length === 2) {
+    if (lastmessage.length === 0) {
+      await message.reply('Error: Response was empty');
+    } else {
+      await message.reply(lastmessage.slice(0, 2000));
+      lastmessage = lastmessage.slice(2000);
+    }
+
     return;
   }
 
@@ -52,7 +66,9 @@ client.on('messageCreate', async (message) => {
         throw new Error('Response was empty');
       }
 
-      await reply.edit(json.choices[0].message.content);
+      lastmessage = json.choices[0].message.content;
+      await reply.edit(lastmessage.slice(0, 2000));
+      lastmessage = lastmessage.slice(2000);
     })
     .catch(async (error) => {
       await reply.edit(`An error occurred... \`${error}\``);
