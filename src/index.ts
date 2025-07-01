@@ -18,6 +18,11 @@ client.login(process.env.BOT_TOKEN);
 let lastmessage = '';
 
 client.on('messageCreate', async (message) => {
+  // Ignore bots or self
+  if (message.author.bot || message.author.id === client.user.id) {
+    return;
+  }
+
   // We only care about self-mentions
   if (!message.mentions.members.has(client.user.id)) {
     return;
