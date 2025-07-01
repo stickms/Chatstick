@@ -47,14 +47,15 @@ client.on('messageCreate', async (message) => {
 
       return res.json(); 
     })
-    .then((json) => {
+    .then(async (json) => {
       if (!json.choices?.[0]?.message?.content) {
         throw new Error('Response was empty');
       }
 
-      reply.edit(json.choices[0].message.content);
+      await reply.edit(json.choices[0].message.content);
     })
-    .catch((error) => {
-      reply.edit(`An error occurred... \`${error}\``);
-    });
+    .catch(async (error) => {
+      await reply.edit(`An error occurred... \`${error}\``);
+    })
+    .catch(console.error);
 });
